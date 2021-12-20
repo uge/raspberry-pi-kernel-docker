@@ -1,4 +1,8 @@
 ---
+
+options:
+  machienType: E2_HIGHCPU_8
+
 steps:
   # Clone kernel
   - name: ubuntu
