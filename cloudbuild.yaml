@@ -1,0 +1,26 @@
+---
+steps:
+  # Clone kernel
+  - name: ubuntu
+    args: ['mkdir', '/workspace/kernel_out']
+
+  - name: 'gcr.io/falkenavionics/raspberry-pi-kernel-docker:4c7925db5a4b25504cb5933da959b5ae4f6267bd'
+    args: ['git', 'clone', '--depth', '1', 'https://github.com/raspberrypi/linux']
+    dir: '/workspace/'
+
+  - name: ubuntu
+    dir: '/workspace'
+    args: ['ls', '-lr']
+
+  - name: 'gcr.io/falkenavionics/raspberry-pi-kernel-docker:4c7925db5a4b25504cb5933da959b5ae4f6267bd'
+    args: ['make', 'O=/workspace/kernel_out/', 'ARCH=arm64', 'CROSS_COMPILE=aarch64-linux-gnu-',
+            'bcm2711_defconfig']
+    dir: '/workspace/linux'
+
+  # Kernel build
+  - name: 'gcr.io/falkenavionics/raspberry-pi-kernel-docker:4c7925db5a4b25504cb5933da959b5ae4f6267bd'
+    args: ['make', '-j8', 'O=/workspace/kernel_out/', 'ARCH=arm64', 'CROSS_COMPILE=aarch64-linux-gnu-', 'Image', 'dtbs']
+    dir: '/workspace/linux'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['-m', 'cp', '-r', 'kernel_out*', 'gs://falkenavionics-rpi-kernel/kernel_out']

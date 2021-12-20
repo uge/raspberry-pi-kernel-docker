@@ -9,4 +9,4 @@ RUN apt-get -y install build-essential libgmp-dev \
 
 RUN apt-get -y install binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
 
-
+ADD build_kernel_64.sh /
